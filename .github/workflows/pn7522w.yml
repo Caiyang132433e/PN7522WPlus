@@ -1,0 +1,37 @@
+name: pn7522w build
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ pn7522w ]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Install Android SDK 37
+        run: |
+          sdk_tool="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
+          (yes || true) | "$sdk_tool" --licenses > /dev/null
+          "$sdk_tool" 'platforms;android-37.0' 'build-tools;37.0.0'
+
+      - name: Build debug APK
+        run: |
+          chmod +x gradlew
+          ./gradlew :app:assembleDebug --no-daemon --stacktrace
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: pn7522w-debug
+          path: app/build/outputs/apk/debug/*.apk
