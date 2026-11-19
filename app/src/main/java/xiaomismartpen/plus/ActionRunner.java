@@ -85,6 +85,9 @@ final class ActionRunner {
                     break;
                 case PenConfig.ACTION_PASSTHROUGH:
                     throw new IllegalStateException("Pen passthrough requires the original event");
+                case PenConfig.ACTION_SCRIBE:
+                    launchScribe(context);
+                    break;
                 case PenConfig.ACTION_FORWARD_F9:
                     inject(context, KeyEvent.KEYCODE_F9);
                     break;
@@ -110,6 +113,20 @@ final class ActionRunner {
         } catch (Throwable failure) {
             Log.w(TAG, "FPL|action|FAILED " + action, failure);
         }
+    }
+
+    /**
+     * MIUI's Scribe canvas. The activity is not exported, so this only works from system_server,
+     * which is exactly where the module runs.
+     */
+    private static void launchScribe(Context context) {
+        Intent intent = new Intent();
+        intent.setComponent(new android.content.ComponentName(
+                "com.miui.notes",
+                "com.miui.notes.ui.activity.CreateDoodleNoteBridgeActivity"));
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(intent);
+        Log.i(TAG, "FPL|action|scribe launched");
     }
 
     private static void volume(Context context, int direction) {

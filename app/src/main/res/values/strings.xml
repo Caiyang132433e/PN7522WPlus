@@ -155,4 +155,5 @@
     <string name="forward_f11">Forward F11</string>
     <string name="forward_page_up">Forward PageUp</string>
     <string name="forward_page_down">Forward PageDown</string>
-    <string name="forward_esc">Forward Esc</string></resources>
+    <string name="forward_esc">Forward Esc</string>    <string name="scribe_note">Scribe (Notes)</string>
+</resources>

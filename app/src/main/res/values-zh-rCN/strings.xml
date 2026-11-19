@@ -155,4 +155,5 @@
     <string name="forward_f11">转发 F11</string>
     <string name="forward_page_up">转发 PageUp</string>
     <string name="forward_page_down">转发 PageDown</string>
-    <string name="forward_esc">转发 Esc</string></resources>
+    <string name="forward_esc">转发 Esc</string>    <string name="scribe_note">速记（小米笔记）</string>
+</resources>

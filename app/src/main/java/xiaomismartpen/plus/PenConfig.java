@@ -57,6 +57,8 @@ final class PenConfig {
     static final String ACTION_FORWARD_PAGE_UP = "forward_page_up";
     static final String ACTION_FORWARD_PAGE_DOWN = "forward_page_down";
     static final String ACTION_FORWARD_ESC = "forward_esc";
+    /** MIUI Scribe canvas; the activity is not exported, so only system_server can start it. */
+    static final String ACTION_SCRIBE = "scribe_note";
 
     /** Each app stores a complete configuration; absent apps use the global settings. */
     private static final String APP_PREFIX = "app.";
@@ -84,6 +86,7 @@ final class PenConfig {
             ACTION_FORWARD_PAGE_UP,
             ACTION_FORWARD_PAGE_DOWN,
             ACTION_FORWARD_ESC,
+            ACTION_SCRIBE,
     };
 
     /** Chinese labels for {@link #ACTIONS}; the indexes must line up. */
@@ -109,6 +112,7 @@ final class PenConfig {
             "转发 PageUp",
             "转发 PageDown",
             "转发 Esc",
+            "速记（小米笔记）",
     };
 
     static final String DEFAULT_APP_ACTION_LABEL = "启动应用";
