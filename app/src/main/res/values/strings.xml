@@ -150,4 +150,9 @@
     <string name="native_system_info">Stylus battery and dock behavior are managed by your system. Button profiles use the detected system adapter.</string>
     <string name="lsposed_info_hyperos">Enable this module for System Framework in LSPosed, then restart.</string>
     <string name="lsposed_info_unknown">Enable this module for System Framework in LSPosed. This ROM uses the generic button adapter and requires verification.</string>
-</resources>
+    <string name="forward_f9">Forward F9</string>
+    <string name="forward_f10">Forward F10</string>
+    <string name="forward_f11">Forward F11</string>
+    <string name="forward_page_up">Forward PageUp</string>
+    <string name="forward_page_down">Forward PageDown</string>
+    <string name="forward_esc">Forward Esc</string></resources>

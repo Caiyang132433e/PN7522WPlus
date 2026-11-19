@@ -122,6 +122,23 @@ final class PenKeyController {
                             }
                         }
                     });
+            // Second entry point: some MIUI builds only reach the dispatching stage for the
+            // pen's Bluetooth tail keys, never the queueing hook above.
+            try {
+                XposedHelpers.findAndHookMethod(
+                        policyClass, loader,
+                        "interceptKeyBeforeDispatching",
+                        android.os.IBinder.class, KeyEvent.class, int.class,
+                        new XC_MethodHook() {
+                            @Override protected void beforeHookedMethod(MethodHookParam param) {
+                                handleTailKeyFromDispatching(
+                                        param, (KeyEvent) param.args[1], param.args[2]);
+                            }
+                        });
+                Log.i(TAG, "FPL|controller|dispatching hook installed");
+            } catch (Throwable failure) {
+                Log.w(TAG, "FPL|controller|dispatching hook missing", failure);
+            }
             Log.i(TAG, "FPL|controller|installed rom=" + RomProfile.detect() + " policy=" + policyClass);
             XposedBridge.log(TAG + " controller installed policy=" + policyClass);
         } catch (Throwable failure) {
@@ -438,14 +455,27 @@ final class PenKeyController {
      * the scan code and does not need the timing state machine the Xiaomi pen requires.
      */
     private static boolean handleTailKey(XC_MethodHook.MethodHookParam param, KeyEvent event) {
-        String slot = PenConfig.tailSlotForScan(event.getScanCode());
+        return handleTailKeyInternal(param, event, param.args.length > 1 ? param.args[1] : null);
+    }
+
+    /** Same logic, but the dispatching hook carries policyFlags in a different argument slot. */
+    private static boolean handleTailKeyFromDispatching(XC_MethodHook.MethodHookParam param,
+                                                        KeyEvent event, Object policyFlags) {
+        return handleTailKeyInternal(param, event, policyFlags);
+    }
+
+    private static boolean handleTailKeyInternal(XC_MethodHook.MethodHookParam param,
+                                                 KeyEvent event, Object policyFlags) {
+        int scan = event.getScanCode();
+        String slot = PenConfig.tailSlotForScan(scan);
         if (slot == null) return false;
         InputDevice device = event.getDevice();
         String name = device == null ? null : device.getName();
+        Log.i(TAG, "FPL|probe|scan=" + scan + " dev=" + name + " action=" + event.getAction());
         if (name == null || !name.toUpperCase(Locale.ROOT).contains("PN7522W")) return false;
 
-        if (param.args.length > 1 && param.args[1] instanceof Integer
-                && (((Integer) param.args[1]) & POLICY_FLAG_INJECTED) != 0) {
+        if (policyFlags instanceof Integer
+                && (((Integer) policyFlags) & POLICY_FLAG_INJECTED) != 0) {
             param.setResult(1);
             return true;
         }
@@ -454,7 +484,10 @@ final class PenKeyController {
             return true;
         }
         PenConfig current = config.resolveForPackage(focusedPackage);
-        if (!current.owns(PenConfig.B3)) return false;
+        if (!current.owns(PenConfig.B3)) {
+            Log.i(TAG, "FPL|tail|not-owned pkg=" + focusedPackage);
+            return false;
+        }
         String action = current.action(PenConfig.B3, slot);
         if (PenConfig.ACTION_NONE.equals(action)) return false;
         param.setResult(0);

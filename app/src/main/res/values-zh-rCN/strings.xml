@@ -150,4 +150,9 @@
     <string name="native_system_info">手写笔电量与吸附行为由当前系统管理，按键配置使用自动识别的系统适配。</string>
     <string name="lsposed_info_hyperos">在 LSPosed 启用本模块，勾选系统框架后重启。</string>
     <string name="lsposed_info_unknown">在 LSPosed 启用本模块并勾选系统框架。当前使用通用按键适配，仍需验证此 ROM。</string>
-</resources>
+    <string name="forward_f9">转发 F9</string>
+    <string name="forward_f10">转发 F10</string>
+    <string name="forward_f11">转发 F11</string>
+    <string name="forward_page_up">转发 PageUp</string>
+    <string name="forward_page_down">转发 PageDown</string>
+    <string name="forward_esc">转发 Esc</string></resources>

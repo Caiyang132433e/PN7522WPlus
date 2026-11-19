@@ -703,6 +703,9 @@ private fun actionLabel(action: String, apps: Map<String, AppEntry>): String {
         "swipe_up" -> R.string.swipe_up; "swipe_down" -> R.string.swipe_down
         "swipe_left" -> R.string.swipe_left; "swipe_right" -> R.string.swipe_right
         "screenshot_partial" -> R.string.screenshot_partial; "passthrough" -> R.string.passthrough
+        "forward_f9" -> R.string.forward_f9; "forward_f10" -> R.string.forward_f10
+        "forward_f11" -> R.string.forward_f11; "forward_page_up" -> R.string.forward_page_up
+        "forward_page_down" -> R.string.forward_page_down; "forward_esc" -> R.string.forward_esc
         else -> R.string.launch_app
     }
     val label = stringResource(id)
