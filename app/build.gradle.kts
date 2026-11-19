@@ -20,8 +20,8 @@ android {
         applicationId = "com.pipa.pn7522wplus"
         minSdk = 34
         targetSdk = 37
-        versionCode = 24
-        versionName = "2.1.0-pn.2"
+        versionCode = 25
+        versionName = "2.1.0-pn.3"
     }
 
     compileOptions {

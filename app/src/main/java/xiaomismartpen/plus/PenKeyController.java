@@ -124,20 +124,30 @@ final class PenKeyController {
                     });
             // Second entry point: some MIUI builds only reach the dispatching stage for the
             // pen's Bluetooth tail keys, never the queueing hook above.
-            try {
-                XposedHelpers.findAndHookMethod(
-                        policyClass, loader,
-                        "interceptKeyBeforeDispatching",
-                        android.os.IBinder.class, KeyEvent.class, int.class,
-                        new XC_MethodHook() {
-                            @Override protected void beforeHookedMethod(MethodHookParam param) {
-                                handleTailKeyFromDispatching(
-                                        param, (KeyEvent) param.args[1], param.args[2]);
-                            }
-                        });
-                Log.i(TAG, "FPL|controller|dispatching hook installed");
-            } catch (Throwable failure) {
-                Log.w(TAG, "FPL|controller|dispatching hook missing", failure);
+            String[] dispatchTargets = {
+                    "com.android.server.policy.PhoneWindowManager",
+                    "com.android.server.policy.MiuiPhoneWindowManager",
+                    "com.android.server.wm.PhoneWindowManager",
+            };
+            boolean dispatchHooked = false;
+            for (String target : dispatchTargets) {
+                if (dispatchHooked) break;
+                try {
+                    XposedHelpers.findAndHookMethod(
+                            target, loader,
+                            "interceptKeyBeforeDispatching",
+                            android.os.IBinder.class, KeyEvent.class, int.class,
+                            new XC_MethodHook() {
+                                @Override protected void beforeHookedMethod(MethodHookParam param) {
+                                    handleTailKeyFromDispatching(
+                                            param, (KeyEvent) param.args[1], param.args[2]);
+                                }
+                            });
+                    dispatchHooked = true;
+                    Log.i(TAG, "FPL|controller|dispatching hook installed on " + target);
+                } catch (Throwable failure) {
+                    Log.w(TAG, "FPL|controller|dispatching missing " + target);
+                }
             }
             Log.i(TAG, "FPL|controller|installed rom=" + RomProfile.detect() + " policy=" + policyClass);
             XposedBridge.log(TAG + " controller installed policy=" + policyClass);
