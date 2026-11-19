@@ -48,7 +48,7 @@ public static void fireChange(){if(registeredObserver!=null)registeredObserver.d
 'android/database/ContentObserver.java': 'package android.database; import android.os.Handler; public class ContentObserver {private final Handler handler;public ContentObserver(Handler h){handler=h;} public void onChange(boolean b){} public void dispatchChange(){handler.post(()->onChange(false));} }',
 'android/util/Log.java': 'package android.util; public class Log {public static int i(String t,String m){return 0;} public static int w(String t,String m){return 0;} public static int w(String t,String m,Throwable e){e.printStackTrace();return 0;} }',
 'android/view/InputDevice.java': 'package android.view; public class InputDevice {String n; public InputDevice(String n){this.n=n;} public String getName(){return n;} }',
-'android/view/KeyEvent.java': 'package android.view; public class KeyEvent {public static final int KEYCODE_PAGE_DOWN=93,KEYCODE_PAGE_UP=92,ACTION_DOWN=0,ACTION_UP=1; int a,c,r;boolean cancel; InputDevice d;public KeyEvent(int a,int c,int r,boolean cancel,InputDevice d){this.a=a;this.c=c;this.r=r;this.cancel=cancel;this.d=d;} public int getKeyCode(){return c;} public int getAction(){return a;} public int getRepeatCount(){return r;} public InputDevice getDevice(){return d;} public boolean isCanceled(){return cancel;} }',
+'android/view/KeyEvent.java': 'package android.view; public class KeyEvent {public static final int KEYCODE_PAGE_DOWN=93,KEYCODE_PAGE_UP=92,ACTION_DOWN=0,ACTION_UP=1; int a,c,r;boolean cancel; InputDevice d;public KeyEvent(int a,int c,int r,boolean cancel,InputDevice d){this.a=a;this.c=c;this.r=r;this.cancel=cancel;this.d=d;} public int getKeyCode(){return c;}public int s;public int getScanCode(){return s;} public int getAction(){return a;} public int getRepeatCount(){return r;} public InputDevice getDevice(){return d;} public boolean isCanceled(){return cancel;} }',
 'de/robv/android/xposed/XC_MethodHook.java': 'package de.robv.android.xposed; public class XC_MethodHook {public static class MethodHookParam {public Object[] args=new Object[0];public Object result;public void setResult(Object o){result=o;} }protected void beforeHookedMethod(MethodHookParam p){} protected void afterHookedMethod(MethodHookParam p){} }',
 'de/robv/android/xposed/XposedBridge.java': 'package de.robv.android.xposed; public class XposedBridge {public static void log(String s){} public static void hookAllMethods(Class<?> c,String m,XC_MethodHook h){} }',
 'de/robv/android/xposed/XposedHelpers.java': 'package de.robv.android.xposed; public class XposedHelpers {public static void findAndHookMethod(String c,ClassLoader l,String n,Object... args){} public static Class<?> findClass(String n,ClassLoader l){return Object.class;} public static Object callMethod(Object o,String n,Object...args){return null;} public static Object getObjectField(Object o,String n){return null;} }',
@@ -68,6 +68,7 @@ public static final Map<String,String> values=new LinkedHashMap<>(); public stat
 public static String get(String name){if(failGet)throw new SecurityException("property access denied");return values.getOrDefault(name,"");}
 public static void reset(){values.clear();failGet=false;}
 }'''
+stubs['android/view/MotionEvent.java']='package android.view; public class MotionEvent extends InputEvent {public static final int BUTTON_STYLUS_PRIMARY=32,BUTTON_STYLUS_SECONDARY=64,TOOL_TYPE_STYLUS=2,ACTION_DOWN=0,ACTION_UP=1,ACTION_MOVE=2; public int tool,bs; public MotionEvent(){} public MotionEvent(int t,int b){tool=t;bs=b;} public int getToolType(int i){return tool;} public int getButtonState(){return bs;} public int getSource(){return 0;} }'
 stubs['android/view/InputEvent.java']='package android.view; public class InputEvent {public int recycleCount; public void recycle(){recycleCount++;}}'
 stubs['de/robv/android/xposed/XC_MethodHook.java']=r'''package de.robv.android.xposed; public class XC_MethodHook {
 public static class Unhook {}
@@ -104,7 +105,7 @@ public static String getString(ContentResolver r,String key){if(failRead)throw n
 public static boolean putString(ContentResolver r,String key,String value){if(failWrite)throw new IllegalStateException("settings write failed");values.put(key,value);writes++;return true;}
 }}'''
 stubs['android/view/InputDevice.java']=r'''package android.view; public class InputDevice {
-public static final int SOURCE_TOUCHSCREEN=0x1002;private final String name;private final int id;public InputDevice(String name){this(name,42);}public InputDevice(String name,int id){this.name=name;this.id=id;}
+public static final int SOURCE_TOUCHSCREEN=0x1002;public static final int SOURCE_STYLUS=0x4002;private final String name;private final int id;public InputDevice(String name){this(name,42);}public InputDevice(String name,int id){this.name=name;this.id=id;}
 public String getName(){return name;}public int getId(){return id;}}
 '''
 stubs['android/view/KeyEvent.java']=r'''package android.view; public class KeyEvent extends InputEvent {
