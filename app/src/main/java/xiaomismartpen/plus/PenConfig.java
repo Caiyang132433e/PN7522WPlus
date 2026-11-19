@@ -24,6 +24,8 @@ import java.nio.charset.StandardCharsets;
 final class PenConfig {
     static final String B1 = "b1";
     static final String B2 = "b2";
+    /** PN7522W tail button: the firmware already encodes the gesture in the key code. */
+    static final String B3 = "b3";
     static final String SHORT = "short";
     static final String LONG = "long";
     static final String DOUBLE = "double";
@@ -48,6 +50,13 @@ final class PenConfig {
     /** Hand the untouched pen key to the foreground app, for apps that map it themselves. */
     static final String ACTION_PASSTHROUGH = "passthrough";
     static final String ACTION_LAUNCH_PREFIX = "launch:";
+    /** Inject a normal Android key so the foreground app (for example Moonlight) can forward it. */
+    static final String ACTION_FORWARD_F9 = "forward_f9";
+    static final String ACTION_FORWARD_F10 = "forward_f10";
+    static final String ACTION_FORWARD_F11 = "forward_f11";
+    static final String ACTION_FORWARD_PAGE_UP = "forward_page_up";
+    static final String ACTION_FORWARD_PAGE_DOWN = "forward_page_down";
+    static final String ACTION_FORWARD_ESC = "forward_esc";
 
     /** Each app stores a complete configuration; absent apps use the global settings. */
     private static final String APP_PREFIX = "app.";
@@ -110,12 +119,16 @@ final class PenConfig {
         // must behave exactly as it does without the module.
         config.setTakeover(B1, false);
         config.setTakeover(B2, false);
+        config.setTakeover(B3, false);
         config.put(B1, SHORT, ACTION_NONE);
         config.put(B1, LONG, ACTION_BACK);
         config.put(B1, DOUBLE, ACTION_NONE);
         config.put(B2, SHORT, ACTION_VOLUME_UP);
         config.put(B2, LONG, ACTION_HOME);
         config.put(B2, DOUBLE, ACTION_PLAY_PAUSE);
+        config.put(B3, SHORT, ACTION_NONE);
+        config.put(B3, DOUBLE, ACTION_NONE);
+        config.put(B3, LONG, ACTION_NONE);
         config.longPressMs = 400L;
         config.doubleWindowMs = 300L;
         return config;
@@ -176,7 +189,7 @@ final class PenConfig {
             doubleWindowMs = clamp(parseLong(value, 300L), 150L, 800L);
         } else if (isActionKey(key)) {
             values.put(key, isKnownAction(value) ? value : ACTION_NONE);
-        } else if (key.equals(B1 + ".takeover") || key.equals(B2 + ".takeover")) {
+        } else if (key.equals(B1 + ".takeover") || key.equals(B2 + ".takeover") || key.equals(B3 + ".takeover")) {
             values.put(key, "true".equals(value) ? "true" : "false");
         }
     }
@@ -302,6 +315,16 @@ final class PenConfig {
             if (!ACTION_PASSTHROUGH.equals(action(button, slot))) return false;
         }
         return true;
+    }
+
+    /** PN7522W tail button: 190 = single, 189 = double, 188 = long press. */
+    static String tailSlotForScan(int scanCode) {
+        switch (scanCode) {
+            case 190: return SHORT;
+            case 189: return DOUBLE;
+            case 188: return LONG;
+            default: return null;
+        }
     }
 
     static String buttonFor(int keyCode) {

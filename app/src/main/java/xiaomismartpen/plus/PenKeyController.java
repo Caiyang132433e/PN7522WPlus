@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.InputDevice;
 import android.view.InputEvent;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -19,6 +20,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.LinkedHashSet;
 
 import de.robv.android.xposed.XC_MethodHook;
@@ -142,6 +144,10 @@ final class PenKeyController {
             XposedHelpers.findAndHookMethod(manager, "filterInputEvent", InputEvent.class, int.class,
                     new XC_MethodHook() {
                         @Override protected void beforeHookedMethod(MethodHookParam param) {
+                            if (param.args[0] instanceof MotionEvent) {
+                                observeSideButtons((MotionEvent) param.args[0]);
+                                return;
+                            }
                             if (!(param.args[0] instanceof KeyEvent)) return;
                             KeyEvent event = (KeyEvent) param.args[0];
                             synchronized (FILTERED_KEYS) {
@@ -424,6 +430,109 @@ final class PenKeyController {
 
     // ---------------------------------------------------------------- gesture handling
 
+    // ---------------------------------------------------------------- PN7522W tail key
+
+    /**
+     * The PN7522W tail button reports 190/189/188 for single/double/long press through its own
+     * Bluetooth keyboard. Android maps those scan codes to KEYCODE_UNKNOWN, so this path keys off
+     * the scan code and does not need the timing state machine the Xiaomi pen requires.
+     */
+    private static boolean handleTailKey(XC_MethodHook.MethodHookParam param, KeyEvent event) {
+        String slot = PenConfig.tailSlotForScan(event.getScanCode());
+        if (slot == null) return false;
+        InputDevice device = event.getDevice();
+        String name = device == null ? null : device.getName();
+        if (name == null || !name.toUpperCase(Locale.ROOT).contains("PN7522W")) return false;
+
+        if (param.args.length > 1 && param.args[1] instanceof Integer
+                && (((Integer) param.args[1]) & POLICY_FLAG_INJECTED) != 0) {
+            param.setResult(1);
+            return true;
+        }
+        if (event.getAction() == KeyEvent.ACTION_UP || event.getRepeatCount() > 0) {
+            param.setResult(0);
+            return true;
+        }
+        PenConfig current = config.resolveForPackage(focusedPackage);
+        if (!current.owns(PenConfig.B3)) return false;
+        String action = current.action(PenConfig.B3, slot);
+        if (PenConfig.ACTION_NONE.equals(action)) return false;
+        param.setResult(0);
+        Log.i(TAG, "FPL|tail|" + slot + "|" + action);
+        runAction(action);
+        return true;
+    }
+
+    // ---------------------------------------------------------------- PN7522W side buttons
+
+    private static final class SideState {
+        boolean down;
+        boolean longFired;
+        long token;
+        String shortAction;
+        Runnable task;
+    }
+
+    private static final Map<String, SideState> SIDES = new HashMap<>();
+
+    /** MotionEvent carries the two barrel buttons, not a KeyEvent, so they are observed here. */
+    private static void observeSideButtons(MotionEvent event) {
+        int toolType = event.getToolType(0);
+        if (toolType != MotionEvent.TOOL_TYPE_STYLUS
+                && (event.getSource() & InputDevice.SOURCE_STYLUS) == 0) return;
+        int state = event.getButtonState();
+        onSideButton(PenConfig.B1, (state & MotionEvent.BUTTON_STYLUS_PRIMARY) != 0);
+        onSideButton(PenConfig.B2, (state & MotionEvent.BUTTON_STYLUS_SECONDARY) != 0);
+    }
+
+    private static void onSideButton(String button, boolean pressed) {
+        synchronized (SIDES) {
+            SideState state = SIDES.get(button);
+            if (state == null) {
+                state = new SideState();
+                SIDES.put(button, state);
+            }
+            if (pressed) {
+                if (state.down) return;
+                PenConfig current = config.resolveForPackage(focusedPackage);
+                if (!current.owns(button)) return;
+                state.down = true;
+                state.longFired = false;
+                state.shortAction = current.action(button, PenConfig.SHORT);
+                final String longAction = current.action(button, PenConfig.LONG);
+                final SideState target = state;
+                final long token = ++state.token;
+                state.task = () -> {
+                    synchronized (SIDES) {
+                        if (target.token != token || !target.down) return;
+                        target.longFired = true;
+                    }
+                    Log.i(TAG, "FPL|side|" + button + "|LONG|" + longAction);
+                    runAction(longAction);
+                };
+                handler.postDelayed(state.task, current.longPressMs);
+            } else {
+                if (!state.down) return;
+                state.down = false;
+                if (state.task != null) {
+                    handler.removeCallbacks(state.task);
+                    state.task = null;
+                }
+                state.token++;
+                if (!state.longFired) {
+                    Log.i(TAG, "FPL|side|" + button + "|SHORT|" + state.shortAction);
+                    runAction(state.shortAction);
+                }
+                state.longFired = false;
+            }
+        }
+    }
+
+    private static void runAction(String action) {
+        if (action == null || PenConfig.ACTION_NONE.equals(action)) return;
+        final Context context = systemContext();
+        handler.post(() -> ActionRunner.run(context, action, 0));
+    }
     private static void handle(XC_MethodHook.MethodHookParam param, KeyEvent event) {
         try {
             if (!isPenButton(event)) return;

@@ -164,7 +164,7 @@ private fun PenApp() {
         buildSet {
             addAll(cfg.appPackages())
             for (profile in listOf(cfg) + cfg.appPackages().mapNotNull { cfg.appConfig(it) }) {
-                for (button in listOf(PenConfig.B1, PenConfig.B2)) for (slot in PenConfig.SLOTS) {
+                for (button in listOf(PenConfig.B1, PenConfig.B2, PenConfig.B3)) for (slot in PenConfig.SLOTS) {
                     val action = profile.action(button, slot)
                     if (action.startsWith(PenConfig.ACTION_LAUNCH_PREFIX)) add(action.removePrefix(PenConfig.ACTION_LAUNCH_PREFIX))
                 }
@@ -450,9 +450,9 @@ private fun ProfileEditor(config: PenConfig, appProfile: Boolean, apps: Map<Stri
     Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
         BoxWithConstraints(Modifier.fillMaxWidth()) {
             if (maxWidth >= 800.dp) Row(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
-                for (button in listOf(PenConfig.B1, PenConfig.B2)) ButtonCard(Modifier.weight(1f), config, button, apps, onEdit, onLaunch)
+                for (button in listOf(PenConfig.B1, PenConfig.B2, PenConfig.B3)) ButtonCard(Modifier.weight(1f), config, button, apps, onEdit, onLaunch)
             } else Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
-                for (button in listOf(PenConfig.B1, PenConfig.B2)) ButtonCard(Modifier, config, button, apps, onEdit, onLaunch)
+                for (button in listOf(PenConfig.B1, PenConfig.B2, PenConfig.B3)) ButtonCard(Modifier, config, button, apps, onEdit, onLaunch)
             }
         }
         PenCard {
@@ -477,7 +477,11 @@ private fun ProfileEditor(config: PenConfig, appProfile: Boolean, apps: Map<Stri
 private fun ButtonCard(modifier: Modifier, config: PenConfig, button: String, apps: Map<String, AppEntry>,
                        onEdit: ((PenConfig) -> Unit) -> Unit, onLaunch: (String, String) -> Unit) {
     PenCard(modifier) {
-        ToggleRow(stringResource(if (button == PenConfig.B1) R.string.key_lower else R.string.key_upper), config.takeover(button),
+        ToggleRow(stringResource(when (button) {
+            PenConfig.B1 -> R.string.key_lower
+            PenConfig.B2 -> R.string.key_upper
+            else -> R.string.key_tail
+        }), config.takeover(button),
             stringResource(if (config.takeover(button)) R.string.takeover_on else R.string.takeover_off)) {
             onEdit { profile -> profile.setTakeover(button, it) }
         }
@@ -682,7 +686,7 @@ private fun ownershipLabel(profile: PenConfig, button: String, context: android.
     context.getString(if (profile.owns(button)) R.string.owned else R.string.native_action)
 
 private fun replaceSettings(target: PenConfig, source: PenConfig) {
-    for (button in listOf(PenConfig.B1, PenConfig.B2)) {
+    for (button in listOf(PenConfig.B1, PenConfig.B2, PenConfig.B3)) {
         target.setTakeover(button, source.takeover(button))
         for (slot in PenConfig.SLOTS) target.setAction(button, slot, source.action(button, slot))
     }

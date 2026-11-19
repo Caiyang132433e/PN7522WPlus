@@ -7,7 +7,7 @@ import android.os.Bundle;
 
 /** App-side persistence. system_server reads the same snapshot through {@link ConfigProvider}. */
 final class ConfigStore {
-    static final String AUTHORITY = "com.inkdye.xiaomipen.config";
+    static final String AUTHORITY = "com.pipa.pn7522wplus.config";
     static final Uri SNAPSHOT_URI = Uri.parse("content://" + AUTHORITY + "/snapshot");
     static final String METHOD_SNAPSHOT = "snapshot";
     static final String KEY_SNAPSHOT = "snapshot";

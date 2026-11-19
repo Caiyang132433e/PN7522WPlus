@@ -17,11 +17,11 @@ android {
     buildToolsVersion = "37.0.0"
 
     defaultConfig {
-        applicationId = "com.inkdye.xiaomipen"
+        applicationId = "com.pipa.pn7522wplus"
         minSdk = 34
         targetSdk = 37
-        versionCode = 22
-        versionName = "2.1.0"
+        versionCode = 23
+        versionName = "2.1.0-pn.1"
     }
 
     compileOptions {

@@ -85,6 +85,24 @@ final class ActionRunner {
                     break;
                 case PenConfig.ACTION_PASSTHROUGH:
                     throw new IllegalStateException("Pen passthrough requires the original event");
+                case PenConfig.ACTION_FORWARD_F9:
+                    inject(context, KeyEvent.KEYCODE_F9);
+                    break;
+                case PenConfig.ACTION_FORWARD_F10:
+                    inject(context, KeyEvent.KEYCODE_F10);
+                    break;
+                case PenConfig.ACTION_FORWARD_F11:
+                    inject(context, KeyEvent.KEYCODE_F11);
+                    break;
+                case PenConfig.ACTION_FORWARD_PAGE_UP:
+                    inject(context, KeyEvent.KEYCODE_PAGE_UP);
+                    break;
+                case PenConfig.ACTION_FORWARD_PAGE_DOWN:
+                    inject(context, KeyEvent.KEYCODE_PAGE_DOWN);
+                    break;
+                case PenConfig.ACTION_FORWARD_ESC:
+                    inject(context, KeyEvent.KEYCODE_ESCAPE);
+                    break;
                 default:
                     Log.w(TAG, "FPL|action|unknown " + action);
                     break;

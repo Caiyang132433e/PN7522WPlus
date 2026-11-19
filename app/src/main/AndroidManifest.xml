@@ -12,7 +12,7 @@
             <intent-filter><action android:name="android.intent.action.MAIN" /><category android:name="android.intent.category.LAUNCHER" /></intent-filter>
         </activity>
         <provider android:name="xiaomismartpen.plus.ConfigProvider"
-            android:authorities="com.inkdye.xiaomipen.config" android:exported="true" android:directBootAware="true" />
+            android:authorities="com.pipa.pn7522wplus.config" android:exported="true" android:directBootAware="true" />
         <meta-data android:name="xposedmodule" android:value="true" />
         <meta-data android:name="xposedminversion" android:value="82" />
         <meta-data android:name="xposeddescription" android:value="@string/module_description" />

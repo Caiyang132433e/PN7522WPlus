@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">焦点笔 Plus</string>
+    <string name="app_name">PN7522W Plus</string>
     <string name="module_description">HyperOS / ColorOS 手写笔按键独立配置</string>
     <string name="tab_default">默认配置</string>
     <string name="tab_apps">应用配置</string>
@@ -18,6 +18,7 @@
     <string name="default_info">没有专属配置的应用使用这一组设置。更改会自动保存。</string>
     <string name="app_info">这组配置只在当前应用获得焦点时生效，按键和时间阈值均独立保存。</string>
     <string name="key_lower">笔键 1 · 下侧</string>
+    <string name="key_tail">顶部按键 · PN7522W</string>
     <string name="key_upper">笔键 2 · 上侧</string>
     <string name="takeover">接管按键</string>
     <string name="takeover_info">关闭接管，或三个动作均为“不执行”时，按键交给系统和应用。</string>
