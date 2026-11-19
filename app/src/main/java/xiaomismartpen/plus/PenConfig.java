@@ -78,6 +78,12 @@ final class PenConfig {
             ACTION_SWIPE_RIGHT,
             ACTION_SCREENSHOT,
             ACTION_PASSTHROUGH,
+            ACTION_FORWARD_F9,
+            ACTION_FORWARD_F10,
+            ACTION_FORWARD_F11,
+            ACTION_FORWARD_PAGE_UP,
+            ACTION_FORWARD_PAGE_DOWN,
+            ACTION_FORWARD_ESC,
     };
 
     /** Chinese labels for {@link #ACTIONS}; the indexes must line up. */
@@ -97,6 +103,12 @@ final class PenConfig {
             "右滑",
             "区域截屏",
             "透传给应用",
+            "转发 F9",
+            "转发 F10",
+            "转发 F11",
+            "转发 PageUp",
+            "转发 PageDown",
+            "转发 Esc",
     };
 
     static final String DEFAULT_APP_ACTION_LABEL = "启动应用";
@@ -350,7 +362,9 @@ final class PenConfig {
     private static boolean isActionKey(String key) {
         return key.equals(B1 + "." + SHORT) || key.equals(B1 + "." + LONG)
                 || key.equals(B1 + "." + DOUBLE) || key.equals(B2 + "." + SHORT)
-                || key.equals(B2 + "." + LONG) || key.equals(B2 + "." + DOUBLE);
+                || key.equals(B2 + "." + LONG) || key.equals(B2 + "." + DOUBLE)
+                || key.equals(B3 + "." + SHORT) || key.equals(B3 + "." + LONG)
+                || key.equals(B3 + "." + DOUBLE);
     }
 
     private static boolean isKnownAction(String value) {
