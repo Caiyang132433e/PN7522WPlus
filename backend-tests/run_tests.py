@@ -109,7 +109,7 @@ public static final int SOURCE_TOUCHSCREEN=0x1002;public static final int SOURCE
 public String getName(){return name;}public int getId(){return id;}}
 '''
 stubs['android/view/KeyEvent.java']=r'''package android.view; public class KeyEvent extends InputEvent {
-public static final int KEYCODE_BUTTON_1=188,KEYCODE_BUTTON_2=189,KEYCODE_PAGE_DOWN=93,KEYCODE_PAGE_UP=92,KEYCODE_MEDIA_PLAY_PAUSE=85,KEYCODE_BACK=4,KEYCODE_HOME=3,KEYCODE_APP_SWITCH=187,ACTION_DOWN=0,ACTION_UP=1,FLAG_KEEP_TOUCH_MODE=4,FLAG_CANCELED=0x20;
+public static final int KEYCODE_BUTTON_1=188,KEYCODE_BUTTON_2=189,KEYCODE_PAGE_DOWN=93,KEYCODE_PAGE_UP=92,KEYCODE_MEDIA_PLAY_PAUSE=85,KEYCODE_BACK=4,KEYCODE_HOME=3,KEYCODE_APP_SWITCH=187,KEYCODE_F9=136,KEYCODE_F10=137,KEYCODE_F11=138,KEYCODE_ESCAPE=111,ACTION_DOWN=0,ACTION_UP=1,FLAG_KEEP_TOUCH_MODE=4,FLAG_CANCELED=0x20;
 private int action,code,repeat,meta,scan,flags,source,display;private long downTime,eventTime;private InputDevice device;
 public KeyEvent(int action,int code,int repeat,boolean canceled,InputDevice device){this(android.os.Handler.now,android.os.Handler.now,action,code,repeat,0,device,0,canceled?FLAG_CANCELED:0,0x101,0);}
 public KeyEvent(long down,long time,int action,int code,int repeat,int meta,InputDevice device,int scan,int flags,int source,int display){this.downTime=down;this.eventTime=time;this.action=action;this.code=code;this.repeat=repeat;this.meta=meta;this.device=device;this.scan=scan;this.flags=flags;this.source=source;this.display=display;}
