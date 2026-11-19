@@ -167,9 +167,9 @@ sender_stubs.update({
 'android/util/DisplayMetrics.java':'package android.util; public class DisplayMetrics {public int widthPixels=2880,heightPixels=1800;}',
 'android/media/AudioManager.java':'package android.media; public class AudioManager {public static final int ADJUST_RAISE=1,ADJUST_LOWER=-1,STREAM_MUSIC=3,FLAG_SHOW_UI=1;public void adjustStreamVolume(int stream,int direction,int flags){}}',
 'android/view/MotionEvent.java':r'''package android.view; public class MotionEvent extends InputEvent {
-public static final int ACTION_DOWN=0,ACTION_UP=1,ACTION_MOVE=2;private long down,time;private int action,source;private float x,y;
+public static final int ACTION_DOWN=0,ACTION_UP=1,ACTION_MOVE=2;public static final int BUTTON_STYLUS_PRIMARY=32,BUTTON_STYLUS_SECONDARY=64,TOOL_TYPE_STYLUS=2;private int buttonState,toolType;private long down,time;private int action,source;private float x,y;
 public static MotionEvent obtain(long down,long time,int action,float x,float y,int meta){MotionEvent event=new MotionEvent();event.down=down;event.time=time;event.action=action;event.x=x;event.y=y;return event;}
-public void setSource(int source){this.source=source;}public long getDownTime(){return down;}public long getEventTime(){return time;}public int getAction(){return action;}public float getX(){return x;}public float getY(){return y;}public int getSource(){return source;}
+public void setSource(int source){this.source=source;}public int getButtonState(){return buttonState;}public int getToolType(int i){return toolType;}public long getDownTime(){return down;}public long getEventTime(){return time;}public int getAction(){return action;}public float getX(){return x;}public float getY(){return y;}public int getSource(){return source;}
 }''',
 'xiaomismartpen/plus/ColorScreenshot.java':'package xiaomismartpen.plus; final class ColorScreenshot {static int calls;static void run(android.content.Context context,ClassLoader loader){calls++;}}',
 'com/miui/server/input/util/ShortCutActionsUtils.java':r'''package com.miui.server.input.util; import android.content.Context; import android.os.Bundle; public class ShortCutActionsUtils {
